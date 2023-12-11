@@ -60,23 +60,23 @@ solvePart2 toMsg =
         |> List.map
             (\splittedLine ->
                 case splittedLine of
-                    head :: line ->
-                        ( String.filter Char.isDigit head, String.split ";" (String.concat line) )
+                    gameCode :: throwsOfCubes ->
+                        ( String.filter Char.isDigit gameCode, String.split ";" (String.concat throwsOfCubes) )
                             |> Tuple.mapFirst String.toInt
                             |> (\codeAndRestLine ->
                                     case codeAndRestLine of
-                                        ( Just code, restLine ) ->
-                                            Just ( code, restLine )
+                                        ( Just code, throws ) ->
+                                            Just ( code, throws )
 
                                         ( Nothing, _ ) ->
                                             Nothing
                                )
                             |> Maybe.map
-                                (\( _, restLine ) ->
+                                (\( _, throws ) ->
                                     let
                                         biggestRed : Maybe Int
                                         biggestRed =
-                                            restLine
+                                            throws
                                                 |> List.map
                                                     (\cubeDrop ->
                                                         String.split "," cubeDrop
@@ -87,7 +87,7 @@ solvePart2 toMsg =
 
                                         biggestGreen : Maybe Int
                                         biggestGreen =
-                                            restLine
+                                            throws
                                                 |> List.map
                                                     (\cubeDrop ->
                                                         String.split "," cubeDrop
@@ -98,7 +98,7 @@ solvePart2 toMsg =
 
                                         biggestBlue : Maybe Int
                                         biggestBlue =
-                                            restLine
+                                            throws
                                                 |> List.map
                                                     (\cubeDrop ->
                                                         String.split "," cubeDrop

@@ -4,6 +4,7 @@ import Browser exposing (Document)
 import FirstAdventPuzzle
 import Html exposing (Html, text)
 import SecondAdventPuzzle
+import ThirdAdventPuzzle
 
 
 
@@ -28,6 +29,7 @@ type alias Model =
     , firstAdventPart2 : Int
     , secondAdventPart1 : Int
     , secondAdventPart2 : Int
+    , thirdAdventPart1 : Int
     }
 
 
@@ -37,16 +39,22 @@ type alias Flags =
 
 init : Flags -> ( Model, Cmd Msg )
 init _ =
+    let
+        _ =
+            Debug.log "checkLog" ThirdAdventPuzzle.solvePart1
+    in
     ( { firstAdventPart1 = 0
       , firstAdventPart2 = 0
       , secondAdventPart1 = 0
       , secondAdventPart2 = 0
+      , thirdAdventPart1 = 0
       }
     , Cmd.batch
         [ FirstAdventPuzzle.solvePart1 FirstPuzzleSolved
         , FirstAdventPuzzle.solvePart2 FirstPuzzlePart2Solved
         , SecondAdventPuzzle.solvePart1 SecondAdventPuzzleSolved
         , SecondAdventPuzzle.solvePart2 SecondAdventPuzzlePart2Solved
+        , ThirdAdventPuzzle.solvePart1 ThirdAdventPuzzleSolved
         ]
     )
 
@@ -60,6 +68,7 @@ type Msg
     | FirstPuzzlePart2Solved Int
     | SecondAdventPuzzleSolved Int
     | SecondAdventPuzzlePart2Solved Int
+    | ThirdAdventPuzzleSolved Int
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -82,6 +91,11 @@ update msg model =
 
         SecondAdventPuzzlePart2Solved result ->
             ( { model | secondAdventPart2 = result }
+            , Cmd.none
+            )
+
+        ThirdAdventPuzzleSolved result ->
+            ( { model | thirdAdventPart1 = result }
             , Cmd.none
             )
 
@@ -126,6 +140,12 @@ view model =
                 [ Html.p []
                     [ text "Second advent part2: "
                     , text (String.fromInt model.secondAdventPart2)
+                    ]
+                ]
+            , Html.li []
+                [ Html.p []
+                    [ text "Third advent part1: "
+                    , text (String.fromInt model.thirdAdventPart1)
                     ]
                 ]
             ]
