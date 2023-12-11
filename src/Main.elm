@@ -30,6 +30,7 @@ type alias Model =
     , secondAdventPart1 : Int
     , secondAdventPart2 : Int
     , thirdAdventPart1 : Int
+    , thirdAdventPart2 : Int
     }
 
 
@@ -48,6 +49,7 @@ init _ =
       , secondAdventPart1 = 0
       , secondAdventPart2 = 0
       , thirdAdventPart1 = 0
+      , thirdAdventPart2 = 0
       }
     , Cmd.batch
         [ FirstAdventPuzzle.solvePart1 FirstPuzzleSolved
@@ -55,6 +57,7 @@ init _ =
         , SecondAdventPuzzle.solvePart1 SecondAdventPuzzleSolved
         , SecondAdventPuzzle.solvePart2 SecondAdventPuzzlePart2Solved
         , ThirdAdventPuzzle.solvePart1 ThirdAdventPuzzleSolved
+        , ThirdAdventPuzzle.solvePart2 ThirdAdventPuzzlePart2Solved
         ]
     )
 
@@ -69,6 +72,7 @@ type Msg
     | SecondAdventPuzzleSolved Int
     | SecondAdventPuzzlePart2Solved Int
     | ThirdAdventPuzzleSolved Int
+    | ThirdAdventPuzzlePart2Solved Int
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -96,6 +100,11 @@ update msg model =
 
         ThirdAdventPuzzleSolved result ->
             ( { model | thirdAdventPart1 = result }
+            , Cmd.none
+            )
+
+        ThirdAdventPuzzlePart2Solved result ->
+            ( { model | thirdAdventPart2 = result }
             , Cmd.none
             )
 
@@ -146,6 +155,12 @@ view model =
                 [ Html.p []
                     [ text "Third advent part1: "
                     , text (String.fromInt model.thirdAdventPart1)
+                    ]
+                ]
+            , Html.li []
+                [ Html.p []
+                    [ text "Third advent part2: "
+                    , text (String.fromInt model.thirdAdventPart2)
                     ]
                 ]
             ]

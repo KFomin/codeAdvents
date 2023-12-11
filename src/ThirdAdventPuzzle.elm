@@ -36,7 +36,7 @@ solvePart1 toMsg =
                             a /= '.' && not (Char.isDigit a) && a /= ' '
                         )
                     |> List.map
-                        (\( symbolIndex, a ) ->
+                        (\( symbolIndex, _ ) ->
                             [ lineWithWholeNumbersAndIndexes
                             , nextLineWithWholeNumbersAndIndexes
                             , previousLineWithWholeNumbersAndIndexes
@@ -46,6 +46,60 @@ solvePart1 toMsg =
                                 |> List.map (\{ number } -> number)
                         )
                     |> List.concat
+            )
+        |> List.concat
+        |> List.sum
+        |> (\code -> Task.perform toMsg (Task.succeed code))
+
+
+solvePart2 : (Int -> msg) -> Cmd msg
+solvePart2 toMsg =
+    puzzle
+        |> String.lines
+        |> List.map String.trim
+        |> List.indexedMap Tuple.pair
+        |> List.map
+            (\( lineIndex, line ) ->
+                let
+                    previousLineWithWholeNumbersAndIndexes : List { indexes : List Int, number : Int }
+                    previousLineWithWholeNumbersAndIndexes =
+                        Dict.get (lineIndex - 1) linesWithWroleNumbersAndIndexes
+                            |> Maybe.withDefault []
+
+                    nextLineWithWholeNumbersAndIndexes : List { indexes : List Int, number : Int }
+                    nextLineWithWholeNumbersAndIndexes =
+                        Dict.get (lineIndex + 1) linesWithWroleNumbersAndIndexes
+                            |> Maybe.withDefault []
+
+                    lineWithWholeNumbersAndIndexes : List { indexes : List Int, number : Int }
+                    lineWithWholeNumbersAndIndexes =
+                        Dict.get lineIndex linesWithWroleNumbersAndIndexes
+                            |> Maybe.withDefault []
+                in
+                line
+                    |> String.toList
+                    |> List.indexedMap Tuple.pair
+                    |> List.filter
+                        (\( _, a ) ->
+                            a /= '.' && not (Char.isDigit a) && a /= ' ' && a == '*'
+                        )
+                    |> List.map
+                        (\( symbolIndex, _ ) ->
+                            [ lineWithWholeNumbersAndIndexes
+                            , nextLineWithWholeNumbersAndIndexes
+                            , previousLineWithWholeNumbersAndIndexes
+                            ]
+                                |> List.map (onlyNumbersAroundSymbol symbolIndex)
+                                |> List.concat
+                                |> List.map (\{ number } -> number)
+                                |> (\numbers ->
+                                        if List.length numbers /= 2 then
+                                            0
+
+                                        else
+                                            List.product numbers
+                                   )
+                        )
             )
         |> List.concat
         |> List.sum
@@ -112,14 +166,6 @@ toWholeNumbersWithIndexes digitsWithIndexes listed =
                         mapListed
             )
         |> Maybe.withDefault listed
-
-
-linesWithIndexes : Dict.Dict Int String
-linesWithIndexes =
-    puzzle
-        |> String.lines
-        |> List.indexedMap Tuple.pair
-        |> Dict.fromList
 
 
 puzzle =
